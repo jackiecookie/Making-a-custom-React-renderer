@@ -2,24 +2,32 @@
 
 This is part one of the tutorial. This is the most important section of the tutorial where you'll learn about the Fiber, detailed description of its structure and fields, creating host configuration for your renderer and injecting the renderer into devtools.
 
-这是教程的第一部分。在你将要学习关于Fiber的教程中这是最为重要的一个章节，详细描述了他的结构和字段，为你的渲染方法创建配置文件和在开发工具中注入渲染方法。
+这是教程的第一部分.也是学习Fiber的最重要的部分.这部分详细描述了Fiber的结构和字段,和如何为你自己的render创建host configuration,以及如何将你的render注入到devtools中。
 
 In this section, we will create a React reconciler using [`react-reconciler`](https://github.com/facebook/react/tree/master/packages/react-reconciler) package. We are going to implement the renderer using Fiber. Earlier, React was using a **stack renderer** as it was implemented on the traditional JavaScript stack. On the other hand, Fiber is influenced by algebraic effects and functional ideas. It can be thought of as a JavaScript object that contains information about a component, its input, and its output.
 
-在这个章节中，我们将会使用[`react-reconciler`]包创建React调度器。我们会使用Fiber实现渲染器。
+在这个章节中，我们将会使用[`react-reconciler`](https://github.com/facebook/react/tree/master/packages/react-reconciler)创建React调度器(reconciler)。我们会使用Fiber实现自己的render。在早期,React使用传统的的JavaScript栈来实现了一个**栈renderer**.另外一方面,Fiber收到代数学和方法编程的影响,他可以借由一个包含着字段的JavaScript对象来描述一个组件,以及他的输入和输出。
 
 Before we proceed further, I'll recommend you to read [this](https://github.com/acdlite/react-fiber-architecture) documentation on Fiber architecture by [Andrew Clark](https://twitter.com/acdlite?lang=en). This will make things
 easier for you.
 
+在我们更深入之前,我建议你可以阅读一下[这个](https://github.com/acdlite/react-fiber-architecture)由[Andrew Clark](https://twitter.com/acdlite?lang=en)写的关于Fiber结构的文档。这会让你学起来简单一些。
+
 Let's get started!
 
+让我们开始吧!
+
 We will first install the dependencies.
+
+首先我们先安装一下依赖
 
 ```
 npm install react-reconciler@0.2.0 fbjs@0.8.16
 ```
 
 Let's import the `Reconciler` from `react-reconciler` and also the other modules.
+
+让我们从`react-reconciler`中引入`Reconciler`,和其他的一些模块.
 
 ```js
 import Reconciler from 'react-reconciler';
@@ -29,6 +37,8 @@ import { createElement } from './utils/createElement';
 ```
 
 Notice we have also imported `createElement` function. Don't worry, we will implement it afterwards.
+
+你应该注意到了我们还引入了`createElement`方法.别担心,我们将会在稍后实现他.
 
 We will create a reconciler instance using `Reconciler` which accepts a **host config** object. In this object we will define
 some methods which can be thought of as lifecycle of a renderer (update, append children, remove children, commit). React will manage all the non-host components, stateless and composites.
